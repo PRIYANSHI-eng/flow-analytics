@@ -6,11 +6,17 @@ const router = Router()
 // GET /api/invoices - List invoices with filtering
 router.get('/', async (req, res) => {
   try {
-    const { search, page = '1', limit = '50', sortBy = 'invoiceDate', order = 'desc' } = req.query
+    const { 
+      search, 
+      page = '1', 
+      pageSize = '10', 
+      sortBy = 'invoiceDate', 
+      sortOrder = 'desc' 
+    } = req.query
 
     const pageNum = parseInt(page as string)
-    const limitNum = parseInt(limit as string)
-    const skip = (pageNum - 1) * limitNum
+    const pageSizeNum = parseInt(pageSize as string)
+    const skip = (pageNum - 1) * pageSizeNum
 
     const where: any = {}
 
@@ -28,7 +34,6 @@ router.get('/', async (req, res) => {
           vendor: {
             select: {
               name: true,
-              taxId: true,
             },
           },
           customer: {
@@ -39,38 +44,37 @@ router.get('/', async (req, res) => {
           payment: {
             select: {
               dueDate: true,
-              terms: true,
             },
           },
         },
         orderBy: {
-          [sortBy as string]: order as 'asc' | 'desc',
+          [sortBy as string === 'date' ? 'invoiceDate' : sortBy as string === 'amount' ? 'totalAmount' : sortBy as string]: sortOrder as 'asc' | 'desc',
         },
         skip,
-        take: limitNum,
+        take: pageSizeNum,
       }),
       prisma.invoice.count({ where }),
     ])
 
+    const now = new Date()
     res.json({
-      data: invoices.map((inv: any) => ({
+      invoices: invoices.map((inv: any) => ({
         id: inv.id,
         invoiceCode: inv.invoiceCode,
-        vendor: inv.vendor.name,
-        date: inv.invoiceDate,
-        amount: Number(inv.totalAmount),
+        vendorName: inv.vendor.name,
+        customerName: inv.customer?.name || null,
+        invoiceDate: inv.invoiceDate?.toISOString() || null,
+        totalAmount: Number(inv.totalAmount),
         currency: inv.currency,
-        status: inv.payment?.dueDate && new Date(inv.payment.dueDate) < new Date() 
-          ? 'overdue' 
-          : 'paid',
-        dueDate: inv.payment?.dueDate,
+        status: (inv.payment?.dueDate && new Date(inv.payment.dueDate) < now)
+            ? 'overdue'
+            : 'pending',
+        dueDate: inv.payment?.dueDate?.toISOString() || null,
+        paymentDate: null,
       })),
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        totalPages: Math.ceil(total / limitNum),
-      },
+      total,
+      page: pageNum,
+      pageSize: pageSizeNum,
     })
   } catch (error) {
     console.error('Error fetching invoices:', error)

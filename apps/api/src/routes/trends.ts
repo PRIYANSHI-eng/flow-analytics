@@ -86,9 +86,12 @@ router.get('/category-spend', async (req, res) => {
       }
     })
 
+    const total = Object.values(categories).reduce((sum, amount) => sum + amount, 0)
+
     const result = Object.entries(categories).map(([category, amount]) => ({
       category,
       amount,
+      percentage: total > 0 ? (amount / total) * 100 : 0,
     }))
 
     res.json(result)
@@ -141,6 +144,7 @@ router.get('/cash-outflow', async (req, res) => {
         return {
           range: range.label,
           amount: total,
+          count: payments.length,
         }
       })
     )

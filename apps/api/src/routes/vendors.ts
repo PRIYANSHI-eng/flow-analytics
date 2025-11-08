@@ -17,22 +17,23 @@ router.get('/top10', async (req, res) => {
     })
 
     const vendorSpends = vendors
-      .map((vendor: { name: string; invoices: { totalAmount: number | string }[] }) => ({
-        name: vendor.name,
+      .map((vendor) => ({
+        vendorId: vendor.id,
+        vendorName: vendor.name,
         totalSpend: vendor.invoices.reduce(
           (sum, inv) => sum + Number(inv.totalAmount),
           0
         ),
         invoiceCount: vendor.invoices.length,
       }))
-      .sort((a: { name: string; totalSpend: number; invoiceCount: number }, b: { name: string; totalSpend: number; invoiceCount: number }) => b.totalSpend - a.totalSpend)
+      .sort((a: { vendorId: string; vendorName: string; totalSpend: number; invoiceCount: number }, b: { vendorId: string; vendorName: string; totalSpend: number; invoiceCount: number }) => b.totalSpend - a.totalSpend)
       .slice(0, 10)
 
     // Calculate cumulative percentage
-    const totalSpend = vendorSpends.reduce((sum: number, v: { name: string; totalSpend: number; invoiceCount: number }) => sum + v.totalSpend, 0)
+    const totalSpend = vendorSpends.reduce((sum: number, v: { vendorId: string; vendorName: string; totalSpend: number; invoiceCount: number }) => sum + v.totalSpend, 0)
     let cumulative = 0
 
-    const result = vendorSpends.map((vendor: { name: string; totalSpend: number; invoiceCount: number }) => {
+    const result = vendorSpends.map((vendor: { vendorId: string; vendorName: string; totalSpend: number; invoiceCount: number }) => {
       cumulative += vendor.totalSpend
       return {
         ...vendor,

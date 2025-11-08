@@ -106,24 +106,24 @@ router.get('/', async (req, res) => {
 
     res.json({
       totalSpend: {
-        value: totalSpend,
+        current: totalSpend,
+        previous: lastMonthSpend,
         change: spendChange,
-        period: 'YTD',
       },
-      totalInvoices: {
-        value: totalInvoices,
+      invoiceCount: {
+        current: totalInvoices,
+        previous: lastMonthInvoices,
         change: invoiceChange,
-        period: 'from last month',
       },
-      documentsUploaded: {
-        value: documentsThisMonth,
+      documentUploads: {
+        current: documentsThisMonth,
+        previous: documentsLastMonth,
         change: documentChange,
-        period: 'this month',
       },
-      averageInvoiceValue: {
-        value: avgInvoiceValue,
+      avgInvoiceValue: {
+        current: avgInvoiceValue,
+        previous: avgInvoiceValue,
         change: 0,
-        period: '',
       },
     })
   } catch (error) {

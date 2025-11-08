@@ -3,11 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import prisma from './lib/prisma'
 import statsRouter from './routes/stats'
-const invoicesRouter = express.Router()
-invoicesRouter.get('/', (req: Request, res: Response) => {
-  // Minimal stub for invoices endpoint to satisfy imports during development
-  res.json({ message: 'Invoices endpoint (stub)', invoices: [] })
-})
+import invoicesRouter from './routes/invoices'
 import vendorsRouter from './routes/vendors'
 import trendsRouter from './routes/trends'
 import chatRouter from './routes/chat'
@@ -15,7 +11,7 @@ import chatRouter from './routes/chat'
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = Number(process.env.PORT) || 3001
 
 // Middleware
 app.use(cors())
@@ -66,8 +62,9 @@ app.use((err: any, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: 'Something went wrong!' })
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 API Server running on http://localhost:${PORT}`)
+  console.log(`   Also available at http://0.0.0.0:${PORT}`)
 })
 
 // Graceful shutdown
