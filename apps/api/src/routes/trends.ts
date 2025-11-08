@@ -101,53 +101,38 @@ router.get('/category-spend', async (req, res) => {
   }
 })
 
-// GET /api/trends/cash-outflow - Cash outflow forecast
+// GET /api/trends/cash-outflow - Cash outflow by amount range
 router.get('/cash-outflow', async (req, res) => {
   try {
-    const now = new Date()
+    // Get all invoices and group by amount ranges
+    const invoices = await prisma.invoice.findMany({
+      select: {
+        totalAmount: true,
+      },
+    })
+
+    // Define amount ranges
     const ranges = [
-      { label: '0-7 days', start: 0, end: 7 },
-      { label: '8-30 days', start: 8, end: 30 },
-      { label: '31-60 days', start: 31, end: 60 },
-      { label: '60+ days', start: 61, end: 365 },
+      { label: '$0-$1k', min: 0, max: 1000 },
+      { label: '$1k-$5k', min: 1000, max: 5000 },
+      { label: '$5k-$10k', min: 5000, max: 10000 },
+      { label: '$10k+', min: 10000, max: Infinity },
     ]
 
-    const result = await Promise.all(
-      ranges.map(async range => {
-        const startDate = new Date(now)
-        startDate.setDate(startDate.getDate() + range.start)
-
-        const endDate = new Date(now)
-        endDate.setDate(endDate.getDate() + range.end)
-
-        const payments = await prisma.payment.findMany({
-          where: {
-            dueDate: {
-              gte: startDate,
-              lte: endDate,
-            },
-          },
-          include: {
-            invoice: {
-              select: {
-                totalAmount: true,
-              },
-            },
-          },
-        })
-
-        const total = payments.reduce(
-          (sum: number, p: { invoice: { totalAmount: any } }) => sum + Number(p.invoice.totalAmount),
-          0
-        )
-
-        return {
-          range: range.label,
-          amount: total,
-          count: payments.length,
-        }
+    const result = ranges.map(range => {
+      const filtered = invoices.filter(inv => {
+        const amount = Number(inv.totalAmount)
+        return amount >= range.min && amount < range.max
       })
-    )
+
+      const total = filtered.reduce((sum, inv) => sum + Number(inv.totalAmount), 0)
+
+      return {
+        range: range.label,
+        amount: Math.round(total),
+        count: filtered.length,
+      }
+    })
 
     res.json(result)
   } catch (error) {
