@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "Testing Flow Analytics API..."
+echo ""
+echo "1. Testing health endpoint..."
+curl -s http://localhost:3001/health | python -m json.tool || echo "❌ Health check failed"
+echo ""
+echo ""
+echo "2. Testing stats endpoint..."
+curl -s http://localhost:3001/api/stats | python -m json.tool || echo "❌ Stats endpoint failed"
+echo ""
+echo ""
+echo "3. Testing vendors endpoint..."
+curl -s http://localhost:3001/api/vendors/top10 | python -m json.tool | head -30 || echo "❌ Vendors endpoint failed"
