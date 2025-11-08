@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vendor {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  taxId     String?
+  address   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  invoices  Invoice[]
+  documents Document[]
+  
+  @@map("vendors")
+}
+
+model Customer {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  address   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  invoices  Invoice[]
+  
+  @@map("customers")
+}
+
+model Document {
+  id           String    @id @default(uuid())
+  externalId   String    @unique
+  name         String
+  fileType     String
+  filePath     String
+  fileSize     BigInt?
+  status       String
+  uploadedAt   DateTime?
+  processedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  vendorId     String
+  vendor       Vendor    @relation(fields: [vendorId], references: [id])
+  
+  invoiceDocuments InvoiceDocument[]
+  
+  @@index([vendorId])
+  @@index([uploadedAt])
+  @@map("documents")
+}
+
+model Invoice {
+  id            String    @id @default(uuid())
+  invoiceCode   String    @unique
+  documentType  String?
+  currency      String?
+  invoiceDate   DateTime?
+  deliveryDate  DateTime?
+  subTotal      Decimal   @db.Decimal(15, 2)
+  totalTax      Decimal   @db.Decimal(15, 2)
+  totalAmount   Decimal   @db.Decimal(15, 2)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  vendorId      String
+  vendor        Vendor    @relation(fields: [vendorId], references: [id])
+  
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  
+  lineItems     InvoiceLineItem[]
+  payment       Payment?
+  invoiceDocuments InvoiceDocument[]
+  
+  @@index([invoiceDate])
+  @@index([vendorId])
+  @@index([customerId])
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  srNo        Int?
+  description String?
+  quantity    Float?
+  unitPrice   Decimal? @db.Decimal(15, 2)
+  totalPrice  Decimal? @db.Decimal(15, 2)
+  vatRate     String?
+  vatAmount   Decimal? @db.Decimal(15, 2)
+  glAccount   String?
+  buKey       String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@map("invoice_line_items")
+}
+
+model Payment {
+  id              String    @id @default(uuid())
+  invoiceId       String    @unique
+  invoice         Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  dueDate         DateTime?
+  terms           String?
+  bankAccount     String?
+  netDays         Int?
+  discountPct     Float?
+  discountDays    Int?
+  discountDueDate DateTime?
+  discountedTotal Decimal?  @db.Decimal(15, 2)
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([dueDate])
+  @@map("payments")
+}
+
+model InvoiceDocument {
+  id         String   @id @default(uuid())
+  invoiceId  String
+  invoice    Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+  
+  @@unique([invoiceId, documentId])
+  @@map("invoice_documents")
+}
