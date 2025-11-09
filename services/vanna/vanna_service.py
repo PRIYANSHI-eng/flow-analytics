@@ -308,9 +308,34 @@ SQL:"""
             logger.error(f"Error generating SQL: {str(e)}")
             raise
     
+    def _ensure_connection(self):
+        """Ensure database connection is alive, reconnect if needed"""
+        try:
+            if self.connection is None or self.connection.closed:
+                logger.info("🔄 Reconnecting to database...")
+                self.connection = psycopg2.connect(self.database_url)
+                logger.info("✅ Database reconnected")
+            else:
+                # Test connection
+                cursor = self.connection.cursor()
+                cursor.execute("SELECT 1")
+                cursor.close()
+        except Exception as e:
+            logger.warning(f"⚠️ Connection test failed, reconnecting: {str(e)}")
+            try:
+                if self.connection:
+                    self.connection.close()
+            except:
+                pass
+            self.connection = psycopg2.connect(self.database_url)
+            logger.info("✅ Database reconnected after failure")
+    
     async def execute_sql(self, sql: str) -> List[Dict[str, Any]]:
         """Execute SQL query and return results"""
         try:
+            # Ensure connection is alive before executing
+            self._ensure_connection()
+            
             cursor = self.connection.cursor(cursor_factory=RealDictCursor)
             cursor.execute(sql)
             
@@ -327,7 +352,8 @@ SQL:"""
             
         except Exception as e:
             logger.error(f"Error executing SQL: {str(e)}")
-            self.connection.rollback()
+            if self.connection and not self.connection.closed:
+                self.connection.rollback()
             raise
     
     async def ask(self, question: str) -> Dict[str, Any]:

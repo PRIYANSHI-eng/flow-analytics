@@ -4,9 +4,9 @@
 
 Full-stack analytics dashboard with AI-powered natural language queries built with Next.js, Express, and Groq AI.
 
-## í¼ Live Production Deployment
+## ï¿½ï¿½ï¿½ Live Production Deployment
 
-**íº€ Access the Application**
+**ï¿½ï¿½ï¿½ Access the Application**
 
 - **Frontend Dashboard**: https://flow-analytics-web.vercel.app
 - **Backend API**: https://flow-analytics-api.vercel.app  
@@ -14,7 +14,9 @@ Full-stack analytics dashboard with AI-powered natural language queries built wi
 - **Database**: Neon PostgreSQL (Serverless)
 - **GitHub Repository**: https://github.com/PRIYANSHI-eng/flow-analytics
 
-**í³¹ Demo Video**: [Link will be added]
+**ï¿½ï¿½ï¿½ Demo Video**: [Paste your Google Drive link here]
+
+> **âš ï¸ Important Note for Testing**: The AI Chat feature uses Render's free tier, which sleeps after 15 minutes of inactivity. If you see a "connection closed" error on first attempt, please wait 30 seconds and retry - the service will wake up and work perfectly. All other features (Dashboard, Charts, Settings) work instantly!
 
 ## ï¿½ï¿½ Project Overview
 
@@ -22,15 +24,15 @@ Flow Analytics is an intelligent invoice analytics platform that combines powerf
 
 ### Key Features
 
-- í³Š **Real-time Analytics Dashboard** - Interactive charts and metrics for spend analysis
-- í´– **AI Chat Interface** - Ask questions in plain English, get SQL-powered answers
-- í³ˆ **Trend Analysis** - Monthly invoice volumes, category spend, cash flow forecasts
-- í´ **Smart Search** - Filter and search through invoices with ease
+- ï¿½ï¿½ï¿½ **Real-time Analytics Dashboard** - Interactive charts and metrics for spend analysis
+- ï¿½ï¿½ï¿½ **AI Chat Interface** - Ask questions in plain English, get SQL-powered answers
+- ï¿½ï¿½ï¿½ **Trend Analysis** - Monthly invoice volumes, category spend, cash flow forecasts
+- ï¿½ï¿½ï¿½ **Smart Search** - Filter and search through invoices with ease
 - ï¿½ï¿½ **Vendor Intelligence** - Track top vendors, spending patterns, payment status
-- í³± **Responsive Design** - Works seamlessly on desktop and mobile
-- í¼™ **Dark Mode** - Full dark theme support with OKLCH color system
+- ï¿½ï¿½ï¿½ **Responsive Design** - Works seamlessly on desktop and mobile
+- ï¿½ï¿½ï¿½ **Dark Mode** - Full dark theme support with OKLCH color system
 
-## í» ï¸ Tech Stack
+## ï¿½ï¿½ï¿½ï¸ Tech Stack
 
 ### Frontend
 - **Framework**: Next.js 16 (App Router)
@@ -53,7 +55,7 @@ Flow Analytics is an intelligent invoice analytics platform that combines powerf
 - **LLM**: Groq (LLaMA 3.3 70B Versatile)
 - **Deployment**: Render
 
-## í³¡ API Endpoints
+## ï¿½ï¿½ï¿½ API Endpoints
 
 ### Express Backend
 
@@ -75,7 +77,7 @@ Flow Analytics is an intelligent invoice analytics platform that combines powerf
 | `/ask` | POST | Natural language to SQL + execution |
 | `/docs` | GET | Interactive API documentation |
 
-## í¾¯ Assignment Requirements
+## ï¿½ï¿½ï¿½ Assignment Requirements
 
 ### âœ… Completed Features
 
@@ -90,7 +92,7 @@ Flow Analytics is an intelligent invoice analytics platform that combines powerf
 - [x] Responsive design
 - [x] Production deployment (Vercel + Render + Neon)
 
-### í¼Ÿ Bonus Features
+### ï¿½ï¿½ï¿½ Bonus Features
 
 - [x] Chat history persistence with localStorage
 - [x] OKLCH color system for consistent theming
@@ -98,12 +100,12 @@ Flow Analytics is an intelligent invoice analytics platform that combines powerf
 - [x] Comprehensive error handling
 - [x] Serverless deployment architecture
 
-## í³„ License
+## ï¿½ï¿½ï¿½ License
 
 This project is part of the Flowbit AI internship program.
 
 ---
 
-**Status**: âœ… Production Ready | íº€ Fully Deployed
+**Status**: âœ… Production Ready | ï¿½ï¿½ï¿½ Fully Deployed
 
 Built with â¤ï¸ using Next.js 16, Express, Prisma, and Groq AI
