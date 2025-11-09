@@ -5,7 +5,7 @@ Handles Groq LLM integration and SQL generation/execution
 
 import os
 from typing import List, Dict, Any
-from groq import Groq
+import httpx
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import logging
@@ -20,7 +20,7 @@ class VannaService:
         self.groq_api_key = groq_api_key
         self.database_url = database_url
         self.connection = None  # Initialize connection first to avoid AttributeError
-        self.groq_client = None  # Initialize later to avoid version conflicts
+        self.groq_base_url = "https://api.groq.com/openai/v1"  # Groq REST API endpoint
         
         # Parse database URL
         self._parse_database_url()
@@ -37,9 +37,7 @@ class VannaService:
     async def initialize(self):
         """Initialize database connection and schema"""
         try:
-            # Initialize Groq client
-            self.groq_client = Groq(api_key=self.groq_api_key)
-            logger.info("✅ Groq client initialized")
+            logger.info("✅ Groq REST API configured")
             
             # Connect to PostgreSQL
             self.connection = psycopg2.connect(self.database_url)
@@ -179,7 +177,7 @@ CRITICAL RULES:
         return schema
     
     async def generate_sql(self, question: str) -> str:
-        """Generate SQL from natural language using Groq"""
+        """Generate SQL from natural language using Groq REST API"""
         try:
             # Create prompt for Groq
             prompt = f"""You are a PostgreSQL expert. Convert the following natural language question into a valid PostgreSQL query.
@@ -200,24 +198,36 @@ Return only valid PostgreSQL SQL.
 
 SQL:"""
             
-            # Call Groq API
-            response = self.groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",  # Groq's latest powerful model
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a PostgreSQL expert. Generate only valid SQL queries without explanations."
+            # Call Groq REST API using httpx
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.groq_base_url}/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {self.groq_api_key}",
+                        "Content-Type": "application/json"
                     },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                temperature=0.1,  # Low temperature for consistent SQL
-                max_tokens=500
-            )
+                    json={
+                        "model": "llama-3.3-70b-versatile",
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "You are a PostgreSQL expert. Generate only valid SQL queries without explanations."
+                            },
+                            {
+                                "role": "user",
+                                "content": prompt
+                            }
+                        ],
+                        "temperature": 0.1,
+                        "max_tokens": 500
+                    },
+                    timeout=30.0
+                )
+                
+                response.raise_for_status()
+                result = response.json()
             
-            sql = response.choices[0].message.content.strip()
+            sql = result["choices"][0]["message"]["content"].strip()
             
             # Clean up the SQL (remove markdown formatting if present)
             sql = sql.replace("```sql", "").replace("```", "").strip()
