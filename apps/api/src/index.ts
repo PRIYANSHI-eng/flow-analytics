@@ -62,13 +62,19 @@ app.use((err: any, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: 'Something went wrong!' })
 })
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 API Server running on http://localhost:${PORT}`)
-  console.log(`   Also available at http://0.0.0.0:${PORT}`)
-})
+// Start server only if not in Vercel serverless environment
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 API Server running on http://localhost:${PORT}`)
+    console.log(`   Also available at http://0.0.0.0:${PORT}`)
+  })
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  await prisma.$disconnect()
-  process.exit(0)
-})
+  // Graceful shutdown
+  process.on('SIGINT', async () => {
+    await prisma.$disconnect()
+    process.exit(0)
+  })
+}
+
+// Export for Vercel serverless
+export default app
