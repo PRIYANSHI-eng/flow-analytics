@@ -9,14 +9,12 @@ import { InvoicesTable } from "@/components/dashboard/invoices-table";
 export default function DashboardPage() {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Debug Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm font-semibold text-blue-900">
-            ℹ️ API URL: {process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001'}
-          </p>
-          <p className="text-xs text-blue-700 mt-1">
-            Open browser console (F12) to see data fetching logs
+      <div className="space-y-8">
+        {/* Page Header */}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">
+            Welcome back! Here's your invoice analytics overview
           </p>
         </div>
 

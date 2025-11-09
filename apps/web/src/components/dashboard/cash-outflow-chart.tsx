@@ -40,42 +40,48 @@ export function CashOutflowChart() {
   }
 
   return (
-    <Card>
+    <Card className="chart-card">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Cash Outflow by Amount Range</CardTitle>
+        <CardTitle className="text-base font-semibold flex items-center gap-2">
+          💸 Cash Outflow by Amount Range
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.92 0.005 264)" className="dark:opacity-20" />
             <XAxis 
               dataKey="range" 
-              tick={{ fontSize: 12 }}
-              stroke="#888"
+              tick={{ fontSize: 12, fill: "oklch(0.50 0.01 264)" }}
+              stroke="oklch(0.92 0.005 264)"
+              className="dark:stroke-border"
               angle={-45}
               textAnchor="end"
               height={80}
             />
             <YAxis 
               yAxisId="left"
-              tick={{ fontSize: 12 }}
-              stroke="#888"
-              label={{ value: 'Total Amount ($)', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
+              tick={{ fontSize: 12, fill: "oklch(0.50 0.01 264)" }}
+              stroke="oklch(0.92 0.005 264)"
+              className="dark:stroke-border"
+              label={{ value: 'Total Amount ($)', angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: "oklch(0.50 0.01 264)" } }}
               tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
             />
             <YAxis 
               yAxisId="right"
               orientation="right"
-              tick={{ fontSize: 12 }}
-              stroke="#888"
-              label={{ value: 'Invoice Count', angle: 90, position: 'insideRight', style: { fontSize: 12 } }}
+              tick={{ fontSize: 12, fill: "oklch(0.50 0.01 264)" }}
+              stroke="oklch(0.92 0.005 264)"
+              className="dark:stroke-border"
+              label={{ value: 'Invoice Count', angle: 90, position: 'insideRight', style: { fontSize: 12, fill: "oklch(0.50 0.01 264)" } }}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'white', 
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                fontSize: 12
+                backgroundColor: 'oklch(1 0 0)', 
+                border: '1px solid oklch(0.92 0.005 264)',
+                borderRadius: '12px',
+                fontSize: 12,
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
               }}
               formatter={(value: number, name: string) => {
                 if (name === 'Total Amount') {
@@ -84,20 +90,20 @@ export function CashOutflowChart() {
                 return value;
               }}
             />
-            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 16 }} />
             <Bar 
               yAxisId="left"
               dataKey="amount" 
-              fill="#3b82f6" 
+              fill="oklch(0.6 0.22 264)" 
               name="Total Amount"
-              radius={[4, 4, 0, 0]}
+              radius={[8, 8, 0, 0]}
             />
             <Bar 
               yAxisId="right"
               dataKey="count" 
-              fill="#10b981" 
+              fill="oklch(0.65 0.20 180)" 
               name="Invoice Count"
-              radius={[4, 4, 0, 0]}
+              radius={[8, 8, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>

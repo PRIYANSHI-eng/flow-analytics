@@ -40,9 +40,11 @@ export function VendorSpendChart() {
   }
 
   return (
-    <Card>
+    <Card className="chart-card">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Top Vendors by Spend</CardTitle>
+        <CardTitle className="text-base font-semibold flex items-center gap-2">
+          🏢 Top Vendors by Spend
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -51,40 +53,44 @@ export function VendorSpendChart() {
             layout="vertical"
             margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.92 0.005 264)" className="dark:opacity-20" />
             <XAxis 
               type="number" 
-              tick={{ fontSize: 12 }}
-              stroke="#888"
+              tick={{ fontSize: 12, fill: "oklch(0.50 0.01 264)" }}
+              stroke="oklch(0.92 0.005 264)"
+              className="dark:stroke-border"
               tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
             />
             <YAxis 
               type="category" 
               dataKey="vendorName" 
-              tick={{ fontSize: 12 }}
-              stroke="#888"
+              tick={{ fontSize: 12, fill: "oklch(0.50 0.01 264)" }}
+              stroke="oklch(0.92 0.005 264)"
+              className="dark:stroke-border"
               width={90}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'white', 
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                fontSize: 12
+                backgroundColor: 'oklch(1 0 0)', 
+                border: '1px solid oklch(0.92 0.005 264)',
+                borderRadius: '12px',
+                fontSize: 12,
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
               }}
               formatter={(value: number) => [`$${value.toLocaleString()}`, 'Total Spend']}
             />
             <Bar 
               dataKey="totalSpend" 
-              fill="#3b82f6" 
-              radius={[0, 4, 4, 0]}
+              fill="oklch(0.6 0.22 264)" 
+              radius={[0, 8, 8, 0]}
               label={{ 
                 position: 'right',
                 formatter: (value: unknown) => {
                   const numValue = typeof value === 'number' ? value : 0;
                   return `${((numValue / data.reduce((sum, item) => sum + item.totalSpend, 0)) * 100).toFixed(1)}%`;
                 },
-                fontSize: 11
+                fontSize: 11,
+                fill: "oklch(0.50 0.01 264)"
               }}
             />
           </BarChart>
