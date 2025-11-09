@@ -7,7 +7,7 @@ import { apiClient } from "@/lib/api-client";
 import type { CategorySpend } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+const COLORS = ['oklch(0.6 0.22 264)', 'oklch(0.65 0.20 180)', 'oklch(0.7 0.18 310)', 'oklch(0.75 0.16 140)', 'oklch(0.68 0.19 40)', 'oklch(0.72 0.22 310)', 'oklch(0.78 0.18 140)', 'oklch(0.73 0.21 40)'];
 
 export function CategorySpendChart() {
   const [data, setData] = useState<CategorySpend[]>([]);
@@ -64,9 +64,11 @@ export function CategorySpendChart() {
   };
 
   return (
-    <Card>
+    <Card className="chart-card">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Spend by Category</CardTitle>
+        <CardTitle className="text-base font-semibold flex items-center gap-2">
+          🎯 Spend by Category
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -77,10 +79,12 @@ export function CategorySpendChart() {
               cy="50%"
               labelLine={false}
               label={renderCustomLabel}
-              outerRadius={100}
+              outerRadius={105}
               fill="#8884d8"
               dataKey="amount"
               nameKey="category"
+              strokeWidth={2}
+              stroke="oklch(1 0 0)"
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -88,17 +92,18 @@ export function CategorySpendChart() {
             </Pie>
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'white', 
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                fontSize: 12
+                backgroundColor: 'oklch(1 0 0)', 
+                border: '1px solid oklch(0.92 0.005 264)',
+                borderRadius: '12px',
+                fontSize: 12,
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
               }}
               formatter={(value: number) => `$${value.toLocaleString()}`}
             />
             <Legend 
               verticalAlign="bottom" 
               height={36}
-              wrapperStyle={{ fontSize: 12 }}
+              wrapperStyle={{ fontSize: 12, paddingTop: 16 }}
               formatter={(value, entry: any) => `${value} (${entry.payload.percentage.toFixed(1)}%)`}
             />
           </PieChart>

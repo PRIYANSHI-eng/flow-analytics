@@ -79,30 +79,41 @@ export function OverviewCards() {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => {
         const isPositive = card.change >= 0;
         return (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+          <Card 
+            key={index} 
+            className="stat-card border-l-4 border-l-primary/50 dark:border-l-primary/70 bg-gradient-to-br from-card to-card/50 dark:from-card dark:to-card/80"
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground/90">
                 {card.title}
               </CardTitle>
-              <span className="text-2xl">{card.icon}</span>
+              <div className="p-2.5 rounded-xl bg-primary/10 dark:bg-primary/20">
+                <span className="text-2xl">{card.icon}</span>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-              <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
-                {isPositive ? (
-                  <TrendingUp className="h-3 w-3 text-green-600" />
-                ) : (
-                  <TrendingDown className="h-3 w-3 text-red-600" />
-                )}
-                <span className={isPositive ? "text-green-600" : "text-red-600"}>
-                  {isPositive ? "+" : ""}
-                  {card.change.toFixed(1)}%
-                </span>
-                <span>vs last month</span>
+              <div className="text-3xl font-bold tracking-tight text-foreground mb-2">{card.value}</div>
+              <div className="flex items-center gap-1.5 text-xs">
+                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                  isPositive 
+                    ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400" 
+                    : "bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400"
+                }`}>
+                  {isPositive ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3" />
+                  )}
+                  <span className="font-medium">
+                    {isPositive ? "+" : ""}
+                    {card.change.toFixed(1)}%
+                  </span>
+                </div>
+                <span className="text-muted-foreground">vs last month</span>
               </div>
             </CardContent>
           </Card>

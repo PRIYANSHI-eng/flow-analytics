@@ -20,9 +20,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 
 const statusColors = {
-  paid: "bg-green-100 text-green-800",
-  pending: "bg-yellow-100 text-yellow-800",
-  overdue: "bg-red-100 text-red-800",
+  paid: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
+  pending: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200",
+  overdue: "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200",
 };
 
 export function InvoicesTable() {
@@ -74,16 +74,18 @@ export function InvoicesTable() {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="chart-card">
+      <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">Recent Invoices</CardTitle>
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            📄 Recent Invoices
+          </CardTitle>
           <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search invoices..."
-              className="pl-9"
+              className="pl-9 bg-background"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -102,18 +104,18 @@ export function InvoicesTable() {
           </div>
         ) : (
           <>
-            <div className="rounded-md border">
+            <div className="rounded-xl border border-border overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Invoice #</TableHead>
-                    <TableHead>Vendor</TableHead>
-                    <TableHead>Customer</TableHead>
+                  <TableRow className="bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="font-semibold">Invoice #</TableHead>
+                    <TableHead className="font-semibold">Vendor</TableHead>
+                    <TableHead className="font-semibold">Customer</TableHead>
                     <TableHead>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 px-2"
+                        className="h-8 px-2 font-semibold hover:bg-muted"
                         onClick={() => handleSort("date")}
                       >
                         Date
@@ -124,41 +126,44 @@ export function InvoicesTable() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 px-2"
+                        className="h-8 px-2 font-semibold hover:bg-muted"
                         onClick={() => handleSort("amount")}
                       >
                         Amount
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                       </Button>
                     </TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="font-semibold">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {invoices.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-gray-500">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
                         No invoices found
                       </TableCell>
                     </TableRow>
                   ) : (
                     invoices.map((invoice) => (
-                      <TableRow key={invoice.id}>
-                        <TableCell className="font-medium">
+                      <TableRow 
+                        key={invoice.id}
+                        className="hover:bg-muted/30 transition-colors"
+                      >
+                        <TableCell className="font-medium text-foreground">
                           {invoice.invoiceCode}
                         </TableCell>
-                        <TableCell>{invoice.vendorName}</TableCell>
-                        <TableCell>{invoice.customerName || "-"}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-foreground">{invoice.vendorName}</TableCell>
+                        <TableCell className="text-muted-foreground">{invoice.customerName || "-"}</TableCell>
+                        <TableCell className="text-muted-foreground">
                           {format(new Date(invoice.invoiceDate), "MMM dd, yyyy")}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="font-semibold text-foreground">
                           {invoice.currency} {invoice.totalAmount.toLocaleString()}
                         </TableCell>
                         <TableCell>
                           <Badge
                             variant="secondary"
-                            className={statusColors[invoice.status]}
+                            className={`${statusColors[invoice.status]} font-medium px-3 py-1`}
                           >
                             {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
                           </Badge>
@@ -172,7 +177,7 @@ export function InvoicesTable() {
 
             {/* Pagination */}
             <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Page {page} of {totalPages}
               </p>
               <div className="flex gap-2">
@@ -181,6 +186,7 @@ export function InvoicesTable() {
                   size="sm"
                   onClick={() => setPage(page - 1)}
                   disabled={page === 1}
+                  className="hover:bg-muted"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Previous
@@ -190,6 +196,7 @@ export function InvoicesTable() {
                   size="sm"
                   onClick={() => setPage(page + 1)}
                   disabled={page === totalPages}
+                  className="hover:bg-muted"
                 >
                   Next
                   <ChevronRight className="h-4 w-4 ml-1" />
